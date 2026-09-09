@@ -108,6 +108,32 @@
 </head>
 <body class="bg-slate-100/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300">
 
+    <!-- Universal Live IP & BD Time Security Top Bar (Shows on EVERY Page) -->
+    <div class="bg-slate-950 text-slate-300 text-[10px] sm:text-[11px] font-bold py-1.5 px-3 sm:px-6 border-b border-slate-800/80 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 bg-emerald-950/90 text-emerald-400 border border-emerald-800/80 px-2.5 py-0.5 rounded-full font-black shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>🌐 আইপি: {{ request()->ip() }}</span>
+                </span>
+                <span class="text-slate-500 hidden sm:inline">•</span>
+                <span class="inline-flex items-center gap-1.5 bg-slate-900 text-slate-200 border border-slate-800 px-2.5 py-0.5 rounded-full">
+                    <span>🇧🇩 বাংলাদেশ সময়:</span>
+                    <span id="liveBdClock" class="text-amber-300 font-black tracking-wider">{{ now()->setTimezone('Asia/Dhaka')->format('h:i:s A, d M Y') }}</span>
+                </span>
+            </div>
+            
+            <div class="hidden sm:flex items-center gap-2.5 text-slate-400 text-[10px]">
+                <span class="flex items-center gap-1">
+                    <span class="text-emerald-400">🛡️</span>
+                    <span>SSL এনক্রিপ্টেড ও সিকিউর</span>
+                </span>
+                <span>•</span>
+                <span>রোল: <strong class="text-white">{{ auth()->check() ? auth()->user()->role_display_name : 'গেস্ট' }}</strong></span>
+            </div>
+        </div>
+    </div>
+
     @php
         $navPendingReviews = \App\Models\Expense::where('status', 'SUBMITTED')->count();
         $navPendingFunds = \App\Models\FundRequest::where('status', 'PENDING')->count();
@@ -464,6 +490,28 @@
 
     <!-- Comprehensive Anti-Inspect & PWA Service Worker Registration -->
     <script>
+        // Live Bangladesh Standard Time Clock (Ticking every second)
+        function updateBdLiveClock() {
+            const clockEl = document.getElementById('liveBdClock');
+            if (clockEl) {
+                const now = new Date();
+                const options = {
+                    timeZone: 'Asia/Dhaka',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                };
+                const formatter = new Intl.DateTimeFormat('en-US', options);
+                clockEl.textContent = formatter.format(now);
+            }
+        }
+        setInterval(updateBdLiveClock, 1000);
+        updateBdLiveClock();
+
         // PWA Android Install Handler
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {

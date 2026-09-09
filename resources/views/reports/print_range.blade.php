@@ -532,7 +532,13 @@
             <div class="sig-line"></div>
             <div class="sig-title">অনুমোদনকারী (প্রিন্সিপাল মহোদয়)</div>
             <div class="sig-sub">প্রধান নির্বাহী কর্মকর্তা</div>
-        </div>
+    </div>
+
+    <!-- Audit Security Tag with IP & BD Time -->
+    <div style="margin-top: 25px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; font-size: 10px; color: #64748b;">
+        <span>🌐 প্রিন্ট আইপি: <strong>{{ request()->ip() }}</strong></span>
+        <span>⏱️ প্রিন্টের সময় (বাংলাদেশ): <strong>{{ now()->setTimezone('Asia/Dhaka')->format('d F Y, h:i:s A') }}</strong></span>
+        <span>🔒 সিকিউর অডিট রিপোর্ট</span>
     </div>
 
 </div>

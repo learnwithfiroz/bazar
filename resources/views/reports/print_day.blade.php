@@ -454,6 +454,13 @@
     </div>
     @endif
 
+    <!-- Audit Security Tag with IP & BD Time -->
+    <div style="margin-top: 25px; padding-top: 10px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; font-size: 10px; color: #64748b;">
+        <span>🌐 প্রিন্ট আইপি: <strong>{{ request()->ip() }}</strong></span>
+        <span>⏱️ প্রিন্টের সময় (বাংলাদেশ): <strong>{{ now()->setTimezone('Asia/Dhaka')->format('d F Y, h:i:s A') }}</strong></span>
+        <span>🔒 সিকিউর ভাউচার সিস্টেম</span>
+    </div>
+
 </div>
 
 </body>

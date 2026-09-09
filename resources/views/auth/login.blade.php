@@ -100,6 +100,17 @@
             </button>
         </form>
 
+        <!-- 1-Click Android App Install Card on Login Screen -->
+        <div class="p-3.5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 rounded-2xl border border-emerald-300/80 dark:border-emerald-800 text-center space-y-2">
+            <div class="flex items-center justify-center gap-2 text-emerald-950 dark:text-emerald-200 text-xs font-black">
+                <span>📲</span>
+                <span>অ্যান্ড্রয়েড মোবাইলে ১-ট্যাপে ইনস্টল করুন</span>
+            </div>
+            <button type="button" @click="pwaInstallModal = true" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-600/25 transition active:scale-95 flex items-center justify-center gap-1.5">
+                <span>📲 অ্যাপ ডাউনলোড ও ইনস্টল করুন</span>
+            </button>
+        </div>
+
         <!-- Security Footer -->
         <div class="pt-2 text-center border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
             <span>🛡️</span>

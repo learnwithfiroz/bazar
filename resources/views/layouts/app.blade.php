@@ -2,6 +2,7 @@
 <html lang="bn" class="h-full" x-data="{ 
     darkMode: localStorage.getItem('theme') === 'dark',
     notifOpen: false,
+    pwaInstallModal: false,
     toggleTheme() {
         this.darkMode = !this.darkMode;
         localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
@@ -10,9 +11,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#15803d">
+    <meta name="theme-color" content="#10b981">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ডেইলি বাজার">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
     <title>@yield('title', 'Daily Expense & Fund Management') - বাজার ও ফান্ড</title>
     
     <!-- SolaimanLipi & Google Fonts (SolaimanLipi, Hind Siliguri, Plus Jakarta Sans) -->
@@ -190,6 +195,12 @@
                 <!-- User Profile Chip, Notifications, Dark Mode & Logout Button -->
                 <div class="flex items-center space-x-2 sm:space-x-2.5 flex-shrink-0">
                     
+                    <!-- PWA Android App Install Trigger -->
+                    <button type="button" @click="pwaInstallModal = true" title="অ্যান্ড্রয়েড অ্যাপ ইনস্টল করুন" class="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800 text-xs font-black transition active:scale-95 shadow-sm">
+                        <span class="text-sm">📲</span>
+                        <span class="hidden md:inline">অ্যাপ ইনস্টল</span>
+                    </button>
+
                     <!-- Dark Mode Toggle Button -->
                     <button @click="toggleTheme()" title="থিম পরিবর্তন করুন (লাইট / ডার্ক)" class="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm flex items-center justify-center">
                         <span x-text="darkMode ? '☀️' : '🌙'"></span>
@@ -410,8 +421,79 @@
         </div>
     </footer>
 
-    <!-- Comprehensive Anti-Inspect & Anti-F12 Security Protection Script -->
+    <!-- PWA Android App Install Modal -->
+    <div x-show="pwaInstallModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center sm:p-0">
+            <div x-show="pwaInstallModal" @click="pwaInstallModal = false" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+            
+            <div x-show="pwaInstallModal" class="relative bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 text-left shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5 transform transition-all">
+                <div class="text-center space-y-2">
+                    <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white text-3xl mx-auto flex items-center justify-center shadow-lg shadow-emerald-600/30">
+                        🛒
+                    </div>
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white">ডেইলি বাজার ও ফান্ড অ্যাপ</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">আপনার অ্যান্ড্রয়েড মোবাইলে সরাসরি ইনস্টল করে অ্যাপের মতো ব্যবহার করুন</p>
+                </div>
+
+                <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2.5 text-xs text-slate-700 dark:text-slate-300">
+                    <div class="flex items-start gap-2">
+                        <span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">১</span>
+                        <span>নিচের <strong>"📲 সরাসরি ইনস্টল করুন"</strong> বাটনে চাপ দিন।</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">২</span>
+                        <span>অথবা ব্রাউজারের ডানপাশের <strong>(⋮) মেনু</strong> থেকে <strong>"Install app"</strong> বা <strong>"Add to Home screen"</strong> চাপুন।</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">৩</span>
+                        <span>আপনার মোবাইলের হোম স্ক্রিনে অ্যাপ আইকন তৈরি হয়ে যাবে!</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <button type="button" @click="triggerPwaInstall()" class="w-full py-3.5 bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-700 hover:to-emerald-700 text-white font-black rounded-2xl text-xs sm:text-sm shadow-xl shadow-brand-600/25 flex items-center justify-center gap-2 transition active:scale-95">
+                        <span>📲 সরাসরি ইনস্টল করুন (1-Click)</span>
+                    </button>
+                    <button type="button" @click="pwaInstallModal = false" class="w-full py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition">
+                        বন্ধ করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comprehensive Anti-Inspect & PWA Service Worker Registration -->
     <script>
+        // PWA Android Install Handler
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function triggerPwaInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('PWA installed successfully');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('আপনার ব্রাউজারের ডানপাশের মেনু (⋮) থেকে "Install app" অথবা "Add to Home screen" সিলেক্ট করে খুব সহজেই ১-ট্যাপে ইনস্টল করতে পারেন।');
+            }
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                    console.log('SW Registration error: ', err);
+                });
+            });
+        }
+
         // Disable Context Menu (Right-Click)
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
@@ -420,21 +502,16 @@
 
         // Block Developer Tools Shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U, Cmd+Option+I/J/C/U)
         document.addEventListener('keydown', function(e) {
-            // F12 or keyCode 123
             if (e.key === 'F12' || e.keyCode === 123) {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
-
-            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
             if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
-
-            // Ctrl+U (View Source) or Ctrl+S (Save Page)
             if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) {
                 e.preventDefault();
                 e.stopPropagation();

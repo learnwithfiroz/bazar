@@ -116,6 +116,10 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>🌐 আইপি: {{ request()->ip() }}</span>
                 </span>
+                <span class="inline-flex items-center gap-1 bg-indigo-950/90 text-indigo-300 border border-indigo-800/80 px-2.5 py-0.5 rounded-full font-black shadow-sm">
+                    <span>📍</span>
+                    <span id="liveLocationText">লোকেশন সনাক্ত হচ্ছে...</span>
+                </span>
                 <span class="text-slate-500 hidden sm:inline">•</span>
                 <span class="inline-flex items-center gap-1.5 bg-slate-900 text-slate-200 border border-slate-800 px-2.5 py-0.5 rounded-full">
                     <span>🇧🇩 বাংলাদেশ সময়:</span>
@@ -511,6 +515,59 @@
         }
         setInterval(updateBdLiveClock, 1000);
         updateBdLiveClock();
+
+        // Live GeoLocation & IP City Detection
+        function detectLiveLocation() {
+            const locEl = document.getElementById('liveLocationText');
+            if (!locEl) return;
+
+            const cached = sessionStorage.getItem('user_live_location');
+            if (cached) {
+                locEl.textContent = cached;
+            }
+
+            // High Precision Device GPS / Browser Geolocation
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const lat = pos.coords.latitude.toFixed(4);
+                        const lon = pos.coords.longitude.toFixed(4);
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12&addressdetails=1`)
+                            .then(res => res.json())
+                            .then(data => {
+                                const city = data.address?.city || data.address?.town || data.address?.district || data.address?.state || 'ঢাকা';
+                                const country = data.address?.country || 'বাংলাদেশ';
+                                const loc = `${city}, ${country}`;
+                                locEl.textContent = loc;
+                                sessionStorage.setItem('user_live_location', loc);
+                            })
+                            .catch(() => fallbackIpLocation(locEl));
+                    },
+                    () => fallbackIpLocation(locEl),
+                    { timeout: 6000, maximumAge: 300000 }
+                );
+            } else {
+                fallbackIpLocation(locEl);
+            }
+        }
+
+        function fallbackIpLocation(locEl) {
+            fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.city && data.country_name) {
+                        const loc = `${data.city}, ${data.country_name}`;
+                        locEl.textContent = loc;
+                        sessionStorage.setItem('user_live_location', loc);
+                    } else {
+                        locEl.textContent = 'বাংলাদেশ (ডিটেক্টেড)';
+                    }
+                })
+                .catch(() => {
+                    locEl.textContent = 'ঢাকা, বাংলাদেশ';
+                });
+        }
+        detectLiveLocation();
 
         // PWA Android Install Handler
         let deferredPrompt;

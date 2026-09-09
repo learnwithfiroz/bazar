@@ -69,13 +69,22 @@ try {
         $results[] = "✓ `expenses` টেবিলে `vendor_name` কলাম যোগ করা হয়েছে।";
     }
 
-    // 5. Fix users Table Schema (Security Tracking)
+    // 5. Fix users Table Schema & Sync Passwords
     if (!Schema::hasColumn('users', 'last_login_at')) {
         DB::statement("ALTER TABLE `users` ADD COLUMN `last_login_at` TIMESTAMP NULL DEFAULT NULL AFTER `remember_token`");
     }
     if (!Schema::hasColumn('users', 'last_login_ip')) {
         DB::statement("ALTER TABLE `users` ADD COLUMN `last_login_ip` VARCHAR(45) NULL DEFAULT NULL AFTER `last_login_at`");
-        $results[] = "✓ `users` টেবিলে আইপি ও সিকিউরিটি ট্র্যাকিং কলাম যুক্ত হয়েছে।";
+    }
+
+    $principalUser = \App\Models\User::where('phone_number', '01713144920')->orWhere('role', 'principal')->first();
+    if ($principalUser) {
+        $principalUser->update([
+            'phone_number' => '01713144920',
+            'password'     => \Illuminate\Support\Facades\Hash::make('01713144920'),
+            'is_active'    => true,
+        ]);
+        $results[] = "👑 সুপার এডমিন (প্রিন্সিপাল) লগইন আপডেট: ফোন = 01713144920, পাসওয়ার্ড = 01713144920";
     }
 
     // 6. Ensure Sessions & Cache Tables Exist

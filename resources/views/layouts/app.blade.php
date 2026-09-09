@@ -257,9 +257,9 @@
                             {{ mb_substr(auth()->user()->name, 0, 1) }}
                             @endif
                         </div>
-                        <div class="text-left hidden sm:block">
-                            <span class="font-bold text-slate-800 dark:text-slate-100 block text-[11px] leading-tight group-hover:text-brand-700 dark:group-hover:text-brand-400 whitespace-nowrap">{{ auth()->user()->name }}</span>
-                            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 block whitespace-nowrap">{{ auth()->user()->role_display_name }}</span>
+                        <div class="text-left hidden sm:block max-w-[120px] md:max-w-[160px] lg:max-w-[220px]">
+                            <span class="font-bold text-slate-800 dark:text-slate-100 block text-[11px] leading-tight group-hover:text-brand-700 dark:group-hover:text-brand-400 truncate" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</span>
+                            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 block truncate">{{ auth()->user()->role_display_name }}</span>
                         </div>
                         <span class="px-1.5 py-0.5 rounded text-[9px] font-bold sm:hidden whitespace-nowrap
                             {{ auth()->user()->isPrincipal() ? 'bg-purple-100 text-purple-700' : '' }}
